@@ -5,9 +5,10 @@ import {
     useDisconnect,
     useEnsAvatar,
     useEnsName,
+    useSigner
   } from 'wagmi'
 
-import { getAllCasts } from '../src/services/farcaster'
+import { getAllCasts, getAllCastsAndSet, postCast } from '../src/services/farcaster'
 
 const Profile: FC = () => {
     const { address, connector, isConnected } = useAccount()
@@ -17,9 +18,26 @@ const Profile: FC = () => {
         useConnect()
     const { disconnect } = useDisconnect()
     const [casts, setCast] = useState()
+    const {data: signer} = useSigner()
+    const [message, setMessage] = useState('');
+    const handleChange = event => {
+        setMessage(event.target.value);
+
+        console.log('value is:', event.target.value);
+    };
+
+    async function handleClick(event: any) {
+        event.preventDefault();
+
+        // 👇️ value of input field
+        console.log('handleClick 👉️', message);
+
+        const result = await postCast(message, signer)
+        console.log(result)
+    };
 
     useEffect(() => {
-        getAllCasts(setCast)
+        getAllCastsAndSet(setCast)
     }, [])
     
 
@@ -30,6 +48,21 @@ const Profile: FC = () => {
                 <div>{ensName ? `${ensName} (${address})` : address}</div>
                 <div>Connected to {connector?.name}</div>
                 <button onClick={() => disconnect()}>Disconnect</button>
+                {casts && casts[0].body.data.text}
+                <div>
+                    <input
+                        type="text"
+                        id="message"
+                        name="message"
+                        onChange={handleChange}
+                        value={message}
+                        autoComplete="off"
+                    />
+
+                    <h2>Message: {message}</h2>
+
+                    <button onClick={handleClick}>Click</button>
+                </div>
             </div>
         )
     }
@@ -52,6 +85,20 @@ const Profile: FC = () => {
 
             {error && <div>{error.message}</div>}
             {casts && casts[0].body.data.text}
+            <div>
+                <input
+                    type="text"
+                    id="message"
+                    name="message"
+                    onChange={handleChange}
+                    value={message}
+                    autoComplete="off"
+                />
+
+                <h2>Message: {message}</h2>
+
+                <button onClick={handleClick}>Click</button>
+            </div>
         </div>
     )
 }

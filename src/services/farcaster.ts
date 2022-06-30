@@ -1,7 +1,10 @@
 import axios from "axios";
-import got from "got";
-import { providers, Contract, utils } from "ethers";
+import { providers, Contract, utils, ethers, Signer } from "ethers";
 import { Dispatch } from "react";
+import { Wallet } from "@ethersproject/wallet";
+import { keccak256 } from "@ethersproject/keccak256";
+import { toUtf8Bytes } from "@ethersproject/strings";
+import didJWT from 'did-jwt';
 
 const username = "madhur";
 
@@ -672,7 +675,12 @@ function verifyCast(body: any, hash: any) {
   }
 }
 
-export async function getAllCasts(setCast: Dispatch<any>) {
+export async function getAllCastsAndSet(setCast: Dispatch<any>) {
+  const casts = await getAllCasts()
+  setCast(casts);
+}
+
+export async function getAllCasts() {
   const registryContract = await getContract();
 
   const directoryUrl = await registryContract?.getDirectoryUrl(
@@ -690,8 +698,7 @@ export async function getAllCasts(setCast: Dispatch<any>) {
     )
   ).data;
   casts.filter((c: any) => verifyCast(c.body, c.merkleRoot));
-
-  setCast(casts);
+  return casts;
 }
 
 async function getUserData() {
@@ -705,6 +712,91 @@ async function getUserData() {
 
   return user;
 }
+
+
+function generatePkFromSeed(seed: any) {
+  return ethers.Wallet.fromMnemonic(seed, `m/44'/60'/0'/0/1230940800`).privateKey;
+}
+
+export async function postCast(
+  text: string, 
+  signer: Signer | undefined | null
+) {
+
+  if (!signer){
+    console.log("No signer")
+    return null
+  }
+
+  // const signer = new Wallet(privateKey);
+  const casts = await getAllCasts();
+  const lastCast = casts[0];
+  
+  const unsignedCast = {
+    type: 'text-short',
+    publishedAt: Date.now(),
+    sequence: lastCast.body.sequence + 1,
+    username: 'madhur',
+    address: lastCast.body.address,
+    data: {
+      text: text,
+    },
+    prevMerkleRoot: lastCast.merkleRoot,
+  }
+
+  const serializedCast = 
+    JSON.stringify({
+    type: unsignedCast.type,
+    publishedAt: unsignedCast.publishedAt,
+    sequence: unsignedCast.sequence,
+    username: unsignedCast.username,
+    address: unsignedCast.address,
+    data: {
+      text: unsignedCast.data.text,
+      // replyParentMerkleRoot: unsignedCast.data.replyParentMerkleRoot,
+    },
+    prevMerkleRoot: unsignedCast.prevMerkleRoot,
+  })
+
+  console.log("unsignedCast", unsignedCast)
+  
+  const merkleRoot = keccak256(toUtf8Bytes(serializedCast));
+
+  const signedCast = {
+    body: unsignedCast,
+    merkleRoot,
+    signature: await signer.signMessage(merkleRoot),
+  };
+  
+  console.log("signedCast", signedCast)
+
+
+  // const jwt = await didJWT.createJWT(
+  //   { 
+  //     exp: Math.floor(Date.now() / 1000) + 60 
+  //   },
+  //   {
+  //     issuer: `did:ethr:rinkeby:${lastCast.body.address}`,
+  //     signer: didJWT.ES256KSigner(didJWT.hexToBytes(privateKey)),
+  //   },
+  //   { 
+  //     alg: "ES256K" 
+  //   }
+  // );
+
+  const headers = {
+    // authorization: `Bearer ${jwt}`,
+  };
+
+  try {
+    const result = await axios.post("/api/casts/create", signedCast, {
+      headers: headers
+    })
+    console.log(result)
+  } catch (error) {
+    console.log(error)
+  }
+};
 
 // async function getPreviewCasts() {
 //   const casts = await getAllCasts();

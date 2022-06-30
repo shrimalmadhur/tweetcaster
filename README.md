@@ -21,7 +21,6 @@ Open `http://localhost:3000` with your browser to see the result.
 ### Directory Structure
 
 - [`.github`](.github) — GitHub configuration including the CI workflow.<br>
-- [`.husky`](.husky) — Husky configuration and hooks.<br>
 - [`public`](./public) — Static assets such as robots.txt, images, and favicon.<br>
 - [`src`](./src) — Application source code, including pages, components, styles.
 
@@ -45,10 +44,6 @@ import { Button } from '@/components/Button';
 // To import images or other files from the public folder
 import avatar from '@/public/avatar.png';
 ```
-
-### Switch to npm
-
-This starter uses Yarn 1 (Classic) by default, but this choice is yours. If you'd like to switch to npm, delete the `yarn.lock` file, install the dependencies with `npm i`, change the CI workflow, and Husky Git hooks to use npm commands.
 
 ## License
 

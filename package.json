@@ -26,6 +26,7 @@
     ]
   },
   "dependencies": {
+    "did-jwt": "6.2.0",
     "ethers": "5.6.9",
     "got": "11.8.2",
     "next": "12.1.6",
