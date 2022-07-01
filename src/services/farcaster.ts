@@ -4,7 +4,7 @@ import { Dispatch } from "react";
 import { Wallet } from "@ethersproject/wallet";
 import { keccak256 } from "@ethersproject/keccak256";
 import { toUtf8Bytes } from "@ethersproject/strings";
-import didJWT from 'did-jwt';
+import didJWT from "did-jwt";
 
 const username = "madhur";
 
@@ -714,21 +714,28 @@ async function getUserData() {
 }
 
 
-function generatePkFromSeed(seed: any) {
+export function generatePkFromSeed(seed: any) {
+  console.log(seed);
   return ethers.Wallet.fromMnemonic(seed, `m/44'/60'/0'/0/1230940800`).privateKey;
 }
 
 export async function postCast(
+  privateKey: string | undefined,
   text: string, 
-  signer: Signer | undefined | null
+  signer1: Signer | undefined | null
 ) {
 
-  if (!signer){
-    console.log("No signer")
+  // if (!signer1){
+  //   console.log("No signer")
+  //   return null
+  // }
+
+  if (!privateKey) {
+    console.log("No SEED passed");
     return null
   }
 
-  // const signer = new Wallet(privateKey);
+  const signer = new Wallet(privateKey);
   const casts = await getAllCasts();
   const lastCast = casts[0];
   
@@ -770,22 +777,23 @@ export async function postCast(
   
   console.log("signedCast", signedCast)
 
+  console.log(didJWT)
 
-  // const jwt = await didJWT.createJWT(
-  //   { 
-  //     exp: Math.floor(Date.now() / 1000) + 60 
-  //   },
-  //   {
-  //     issuer: `did:ethr:rinkeby:${lastCast.body.address}`,
-  //     signer: didJWT.ES256KSigner(didJWT.hexToBytes(privateKey)),
-  //   },
-  //   { 
-  //     alg: "ES256K" 
-  //   }
-  // );
+  const jwt = await didJWT.createJWT(
+    { 
+      exp: Math.floor(Date.now() / 1000) + 60 
+    },
+    {
+      issuer: `did:ethr:rinkeby:${lastCast.body.address}`,
+      signer: didJWT.ES256KSigner(didJWT.hexToBytes(privateKey)),
+    },
+    { 
+      alg: "ES256K" 
+    }
+  );
 
   const headers = {
-    // authorization: `Bearer ${jwt}`,
+    authorization: `Bearer ${jwt}`,
   };
 
   try {

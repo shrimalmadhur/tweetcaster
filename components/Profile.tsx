@@ -8,7 +8,10 @@ import {
     useSigner
   } from 'wagmi'
 
-import { getAllCasts, getAllCastsAndSet, postCast } from '../src/services/farcaster'
+import { getAllCasts, getAllCastsAndSet, postCast, generatePkFromSeed } from '../src/services/farcaster'
+
+const SEED = process.env.NEXT_PUBLIC_MNEMONIC
+const ALCHEMY_ID=process.env.NEXT_PUBLIC_ALCHEMY_ID
 
 const Profile: FC = () => {
     const { address, connector, isConnected } = useAccount()
@@ -31,8 +34,9 @@ const Profile: FC = () => {
 
         // 👇️ value of input field
         console.log('handleClick 👉️', message);
+        const privateKey = generatePkFromSeed(SEED)
 
-        const result = await postCast(message, signer)
+        const result = await postCast(privateKey, message, signer)
         console.log(result)
     };
 

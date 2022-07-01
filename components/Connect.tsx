@@ -8,7 +8,7 @@ import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 
-const alchemyId = process.env.ALCHEMY_ID
+const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_ID
 
 const {chains, provider, webSocketProvider} = configureChains(defaultChains, [
     alchemyProvider({alchemyId}),
@@ -43,7 +43,7 @@ const client = createClient({
 })
 
 const Connect: FC = () => {
-
+    
     return (
         <WagmiConfig client={client}>
             <Profile />
