@@ -4,7 +4,8 @@ import { Dispatch } from "react";
 import { Wallet } from "@ethersproject/wallet";
 import { keccak256 } from "@ethersproject/keccak256";
 import { toUtf8Bytes } from "@ethersproject/strings";
-import didJWT from "did-jwt";
+// import didJWT from "did-jwt";
+const didJWT = require('did-jwt')
 
 const username = "madhur";
 
@@ -760,12 +761,10 @@ export async function postCast(
     address: unsignedCast.address,
     data: {
       text: unsignedCast.data.text,
-      // replyParentMerkleRoot: unsignedCast.data.replyParentMerkleRoot,
+      // replyParentMerkleRoot: unsignedCast.prevMerkleRoot,
     },
     prevMerkleRoot: unsignedCast.prevMerkleRoot,
   })
-
-  console.log("unsignedCast", unsignedCast)
   
   const merkleRoot = keccak256(toUtf8Bytes(serializedCast));
 
@@ -774,10 +773,6 @@ export async function postCast(
     merkleRoot,
     signature: await signer.signMessage(merkleRoot),
   };
-  
-  console.log("signedCast", signedCast)
-
-  console.log(didJWT)
 
   const jwt = await didJWT.createJWT(
     { 
@@ -800,7 +795,7 @@ export async function postCast(
     const result = await axios.post("/api/casts/create", signedCast, {
       headers: headers
     })
-    console.log(result)
+    return result;
   } catch (error) {
     console.log(error)
   }

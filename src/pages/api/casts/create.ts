@@ -11,14 +11,18 @@ export default async function handler(
         return
     }
 
-    console.log(req.body)
+    // Set JWT token for this request
+    const headers = {
+        authorization: req.headers.authorization,
+    };
+
 
     try {
         const result = await axios.post("https://guardian.farcaster.xyz/indexer/activity", req.body, {
-            headers: req.headers
+            headers: headers
         })
         console.log(result)
-        res.status(200).send(result)
+        res.status(200).send(result.data)
     } catch (error) {
         console.log(error)
         res.status(500).send(error);
