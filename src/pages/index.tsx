@@ -1,6 +1,3 @@
-import Head from "next/head";
-import Image from "next/image";
-import Connect from "components/Connect";
 import { FC, useContext } from "react";
 import dynamic from "next/dynamic";
 

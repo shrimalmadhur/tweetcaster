@@ -1,14 +1,6 @@
 import { FC, useContext, useEffect, useState } from 'react';
-import type {
-    GetServerSideProps,
-    InferGetServerSidePropsType,
-    NextPage,
-  } from 'next'
-
 import { authenticate, getTwitterClient } from '@/services/twitter';
 import useStorage from 'hooks/useStorage'
-import { redirect } from 'next/dist/server/api-utils';
-import exp from 'constants';
 import { useRouter } from 'next/router'
 import Connect from "components/Connect";
 import styles from "@/styles/Home.module.css";
@@ -22,7 +14,6 @@ const Client: FC = () => {
 
   const [client, setClient] = useState()
   
-
   const { getItem } = useStorage();
   const codeVerifier = getItem("codeVerifier");
 

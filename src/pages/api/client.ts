@@ -1,7 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import axios from "axios";
-import { redirect } from "next/dist/server/api-utils";
 import { TwitterApi } from 'twitter-api-v2';
 
 const CLIENT_ID = process.env.NEXT_PUBLIC_TWEETCASTER_CLIENT_ID;
