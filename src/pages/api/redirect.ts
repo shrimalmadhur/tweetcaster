@@ -1,6 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
+import { redirect } from "next/dist/server/api-utils";
 
 export default async function handler(
     req: NextApiRequest,
@@ -8,8 +9,6 @@ export default async function handler(
 ) {
     const state = req.query.state;
     const code = req.query.code;
-    console.log(state);
-    console.log(code);
-
-    res.status(200).send("success")
+    
+    res.redirect("/twitter/client?state=" + state + "&code=" + code)
 }

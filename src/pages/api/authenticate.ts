@@ -30,5 +30,6 @@ export default async function handler(
         'state': state
     }
 
+
     res.status(200).send(returnObj)
 }

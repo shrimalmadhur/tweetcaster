@@ -10,7 +10,6 @@ import Twitter from "components/Twitter";
 const Home: FC = () => {
   return (
     <div className={styles.container}>
-      <Connect />
       <Twitter></Twitter>
     </div>
   );
