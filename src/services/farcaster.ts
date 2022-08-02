@@ -716,7 +716,6 @@ async function getUserData() {
 
 
 export function generatePkFromSeed(seed: any) {
-  console.log(seed);
   return ethers.Wallet.fromMnemonic(seed, `m/44'/60'/0'/0/1230940800`).privateKey;
 }
 
