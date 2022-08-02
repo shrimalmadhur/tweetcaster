@@ -7,6 +7,5 @@ export default async function handler(
 ) {
     const state = req.query.state;
     const code = req.query.code;
-    
     res.redirect("/twitter/client?state=" + state + "&code=" + code)
 }

@@ -37,16 +37,11 @@ export default async function handler(
             // the verifier returned by generateOAuth2AuthLink
             codeVerifier,
         }); 
-        console.log(userClient)
-
-        const data = await userClient.v2.me()
-        console.log(data)
-
-        res.status(200).send(userClient)
+        res.status(200).send(userClient.getActiveTokens().bearerToken)
     } catch (e) {
         console.log(e)
         res.status(403).send("")
     }
-    
-    
 }
+
+// https://github.com/vercel/next.js/issues/2252#issuecomment-308238001
