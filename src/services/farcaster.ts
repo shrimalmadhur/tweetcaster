@@ -676,6 +676,17 @@ function verifyCast(body: any, hash: any) {
   }
 }
 
+// export async function getUsernameFromAddress(address: string, setUsername: Dispatch<any>){
+//   const registryContract = await getContract();
+//   console.log("address")
+//   console.log(address)
+//   // const username = await registryContract?.addressToUsername(
+//   //   address
+//   // )
+//   console.log(utils.parseBytes32String("0x6d61646875720000000000000000000000000000000000000000000000000000"))
+//   setUsername(utils.parseBytes32String("0x6d61646875720000000000000000000000000000000000000000000000000000"))
+// }
+
 export async function getAllCastsAndSet(setCast: Dispatch<any>) {
   const casts = await getAllCasts()
   setCast(casts);

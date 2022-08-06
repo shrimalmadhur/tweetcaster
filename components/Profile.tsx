@@ -8,7 +8,8 @@ import {
     useSigner
   } from 'wagmi'
 
-import { getAllCasts, getAllCastsAndSet, postCast, generatePkFromSeed } from '../src/services/farcaster'
+import { getAllCasts, getAllCastsAndSet, postCast, generatePkFromSeed, getUsernameFromAddress } from '../src/services/farcaster'
+import { getUsername } from '../src/services/searchcaster'
 
 const SEED = process.env.NEXT_PUBLIC_MNEMONIC
 const ALCHEMY_ID=process.env.NEXT_PUBLIC_ALCHEMY_ID
@@ -23,6 +24,8 @@ const Profile: FC = () => {
     const [casts, setCast] = useState()
     const {data: signer} = useSigner()
     const [message, setMessage] = useState('');
+    const [farcasterUsername, setFarcasterUsername] = useState('');
+
     const handleChange = event => {
         setMessage(event.target.value);
 
@@ -43,6 +46,12 @@ const Profile: FC = () => {
     useEffect(() => {
         getAllCastsAndSet(setCast)
     }, [])
+
+    useEffect(() => {
+        if (isConnected && address) {
+            getUsername(address, setFarcasterUsername)
+        }
+    }, [isConnected])
     
 
     if (isConnected) {
@@ -51,6 +60,7 @@ const Profile: FC = () => {
                 {/* <img src={ensAvatar} alt="ENS Avatar" /> */}
                 <div>{ensName ? `${ensName} (${address})` : address}</div>
                 <div>Connected to {connector?.name}</div>
+                <div>Farcaster username: {farcasterUsername}</div>
                 <button onClick={() => disconnect()}>Disconnect</button>
                 {casts && casts[0].body.data.text}
                 <div>
